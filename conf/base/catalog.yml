@@ -1,0 +1,26 @@
+# Here you can define all your data sets by using simple YAML syntax.
+
+my_snowflake_dataset:
+    type: pandas.SQLQueryDataSet
+    credentials: snowflake_creds
+    sql: |
+        SELECT *
+        FROM AMAZING_DATA.CLIENT_DATA.CLIENT_EVENTS
+        WHERE EVENT_TIME >= '2024-10-01' 
+          AND EVENT_TIME < '2024-11-01'
+        SAMPLE (0.1) SEED(42);
+    load_args:
+        index_col: id
+
+
+events_dataset:
+    type: pandas.CSVDataset
+    filepath: data/01_raw/events_dataset.csv
+
+users_dataset:
+    type: pandas.CSVDataset
+    filepath: data/02_intermediate/users_dataset.csv
+
+scaled_dataset:
+    type: pandas.CSVDataset
+    filepath: data/03_scaled/scaled_dataset.csv
