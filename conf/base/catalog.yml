@@ -1,26 +1,47 @@
 # Here you can define all your data sets by using simple YAML syntax.
 
-my_snowflake_dataset:
-    type: pandas.SQLQueryDataSet
-    credentials: snowflake_creds
-    sql: |
-        SELECT *
-        FROM AMAZING_DATA.CLIENT_DATA.CLIENT_EVENTS
-        WHERE EVENT_TIME >= '2024-10-01' 
-          AND EVENT_TIME < '2024-11-01'
-        SAMPLE (0.1) SEED(42);
-    load_args:
-        index_col: id
+#snowflake_dataset:
+#    type: pandas.SQLQueryDataSet
+#    credentials: snowflake_creds
+#    sql: |
+#        SELECT *
+#        FROM AMAZING_DATA.CLIENT_DATA.CLIENT_EVENTS
+#        WHERE EVENT_TIME >= '2024-10-01'
+#          AND EVENT_TIME < '2024-11-01'
+#        SAMPLE (0.1) SEED(42);
+#    load_args:
+#        index_col: id
 
 
 events_dataset:
-    type: pandas.CSVDataset
-    filepath: data/01_raw/events_dataset.csv
+  type: amazing_mspr.extras.partial_csv_dataset.PartialCSVDataSet
+  filepath: data/01_raw/events_dataset.csv
+  nrows: 2000
+  usecols: ["user_id", "event_type", "event_time", "category_code", "category_id", "price"]
+  random: False
 
 users_dataset:
     type: pandas.CSVDataset
     filepath: data/02_intermediate/users_dataset.csv
 
-scaled_dataset:
+completed_dataset:
     type: pandas.CSVDataset
-    filepath: data/03_scaled/scaled_dataset.csv
+    filepath: data/03_completed/completed_dataset.csv
+
+scaled_dataset:
+   type: pandas.CSVDataset
+   filepath: data/04_scaled/scaled_dataset.csv
+
+pca_dataset:
+   type: pandas.CSVDataset
+   filepath: data/04_scaled/scaled_dataset.csv
+
+
+eps_values:
+  type: pickle.PickleDataSet
+  filepath: data/05_model_params/eps_values.pkl
+
+
+dbscan_model:
+  type: pickle.PickleDataSet
+  filepath: data/06_models/dbscan_model.pkl
