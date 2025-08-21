@@ -1,10 +1,8 @@
-import logging
 from typing import Any
 
 import pandas as pd
 import numpy as np
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import max_error, mean_absolute_error, r2_score
+from pandas.core.interchange.dataframe_protocol import DataFrame
 from sklearn.neighbors import NearestNeighbors
 from sklearn.decomposition import PCA
 from kneed import KneeLocator
@@ -22,11 +20,14 @@ def pca_transformation(dataset: pd.DataFrame) -> pd.DataFrame:
         Split data.
     """
     pca = PCA(n_components=3)
-    pca_dataset = pca.fit_transform(dataset)
+    pca_array = pca.fit_transform(dataset)
+    pca_dataset = pd.DataFrame(pca_array)
+
+    print(pca_dataset.head)
 
     return pca_dataset
 
-def search_hyperparameters(dataset: pd.DataFrame) -> tuple:
+def search_hyperparameters(pca_dataset: pd.DataFrame) -> int:
     """Splits data into features and targets training and test sets.
 
     Args:
@@ -36,97 +37,96 @@ def search_hyperparameters(dataset: pd.DataFrame) -> tuple:
         Split data.
     """
 
-    min_samples = dataset.shape[1] + 1
+    min_samples = pca_dataset.shape[1] + 1
 
     neighbors = NearestNeighbors(n_neighbors=min_samples)
-    neighbors_fit = neighbors.fit(dataset)
-    distances, indices = neighbors_fit.kneighbors(dataset)
+    neighbors_fit = neighbors.fit(pca_dataset)
+    distances, indices = neighbors_fit.kneighbors(pca_dataset)
 
     # On prend la distance au dernier voisin (le k-ième)
     distances = np.sort(distances[:, -1])
 
-    sensitivities = [0.5, 1]
-    eps_values = []
+    # sensitivities = [0.5, 1]
+    # eps_values = []
+    # for S in sensitivities:
+    S=0.5
+    kneedle = KneeLocator(range(len(distances)), distances, S=S, curve='convex', direction='increasing')
+    knee_idx = kneedle.knee
+    if knee_idx is not None:
+        eps = distances[knee_idx]
+        print(f"eps détecté avec S={S} : {eps:.4f}")
+        # eps_values.append(eps)
+    else:
+        eps = None
+        print(f"Aucun coude détecté avec S={S}")
+        # eps_values.append(None)
 
-    for S in sensitivities:
-        kneedle = KneeLocator(range(len(distances)), distances, S=S, curve='convex', direction='increasing')
-        knee_idx = kneedle.knee
-        if knee_idx is not None:
-            eps = distances[knee_idx]
-            print(f"eps détecté avec S={S} : {eps:.4f}")
-            eps_values.append(eps)
-        else:
-            print(f"Aucun coude détecté avec S={S}")
-            eps_values.append(None)
+    # return eps_values
+    return eps
 
-    return eps_values
-
-
-def train_model(dataset: pd.DataFrame, eps_values) -> list[Any]:
+def train_model(pca_dataset: pd.DataFrame, eps_values) -> Any:
     """Trains the clustering model.
 
     Args:
-        dataset: Training data of independent features.
+        pca_dataset: Training data of independent features.
         eps_values: Hyperparameters
     Returns:
         Trained model.
     """
-    models = []
 
-    for eps in eps_values:
-        clustering = DBSCAN(eps=eps, min_samples=1000).fit(dataset)
-        models.append(clustering)
+    # for eps in eps_values:
+    clustering = DBSCAN(eps=eps_values, min_samples=1000).fit(pca_dataset)
+        # models.append(clustering)
 
-    return models
+    return clustering
 
 
-def evaluate_model(models: list[Any], dataset: pd.DataFrame, eps_values, seed: int) -> dict[str, Any]:
+def evaluate_model(model: Any, pca_dataset: pd.DataFrame, eps_value, seed: int) -> DataFrame:
     """Calculates and logs the coefficient of determination.
 
     Args:
         models: List of clustering models.
-        dataset: Training data of independent features.
-        eps_values: Hyperparameters
+        scaled_dataset: Training data of independent features.
+        eps_value: Hyperparameters
         seed: Random seed.
     Returns:
         Dictionary containing coefficient of determination.
     """
     max_sample_size = 1000
-
-    best_score = -1
-    best_eps = None
     rng = np.random.default_rng(seed=seed)
 
-    for model in models:
-        labels = model.labels_
+    labels = model.labels_
 
-        n_clusters = len(set(labels)) - (1 if -1 in labels else 0)
-        noise_ratio = list(labels).count(-1) / len(labels)
-        print(f"eps={eps_values[models.index(model)]:.2f} -> clusters: {n_clusters}, bruit: {noise_ratio * 100:.3f}%")
+    n_clusters = len(set(labels)) - (1 if -1 in labels else 0)
+    noise_ratio = list(labels).count(-1) / len(labels)
+    print(f"eps={eps_value:.2f} -> clusters: {n_clusters}, bruit: {noise_ratio * 100:.3f}%")
 
-        mask = labels != -1
-        X_no_noise = dataset[mask]
-        labels_no_noise = labels[mask]
+    mask = labels != -1
+    X_no_noise = pca_dataset[mask]
+    labels_no_noise = labels[mask]
 
-        if n_clusters > 1 and len(X_no_noise) > 0:
-            sample_size = min(max_sample_size, len(X_no_noise))
-            indices = rng.choice(len(X_no_noise), sample_size, replace=False)
-            X_sample = X_no_noise[indices]
-            labels_sample = labels_no_noise[indices]
+    sil_score = None
+    ch_score = None
+    db_score = None
 
-            sil_score = silhouette_score(X_sample, labels_sample)
-            ch_score = calinski_harabasz_score(X_sample, labels_sample)
-            db_score = davies_bouldin_score(X_sample, labels_sample)
+    if n_clusters > 1 and len(X_no_noise) > 0:
+        sample_size = min(max_sample_size, len(X_no_noise))
+        indices = rng.choice(len(X_no_noise), sample_size, replace=False)
+        X_sample = X_no_noise[indices]
+        labels_sample = labels_no_noise[indices]
 
-            print(f"  Silhouette Score    : {sil_score:.3f}")
-            print(f"  Calinski-Harabasz   : {ch_score:.3f}")
-            print(f"  Davies-Bouldin      : {db_score:.3f}")
+        sil_score = silhouette_score(X_sample, labels_sample)
+        ch_score = calinski_harabasz_score(X_sample, labels_sample)
+        db_score = davies_bouldin_score(X_sample, labels_sample)
 
-            if sil_score > best_score:
-                best_score = sil_score
-                best_eps = eps_values[models.index(model)]
+        print(f"  Silhouette Score    : {sil_score:.3f}")
+        print(f"  Calinski-Harabasz   : {ch_score:.3f}")
+        print(f"  Davies-Bouldin      : {db_score:.3f}")
 
-        else:
-            print("Pas assez de clusters pour calculer les scores.")
+    else:
+        print("Pas assez de clusters pour calculer les scores.")
 
-        return {"best_eps": best_eps, "best_score": best_score}
+
+    evaluation_results = pd.DataFrame({"sil_score": [sil_score], "ch_score": [ch_score], "db_score": [db_score]})
+
+    return evaluation_results

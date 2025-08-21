@@ -34,14 +34,18 @@ scaled_dataset:
 
 pca_dataset:
    type: pandas.CSVDataset
-   filepath: data/04_scaled/scaled_dataset.csv
+   filepath: data/05_model_params/pca_dataset.csv
 
-
-eps_values:
-  type: pickle.PickleDataSet
-  filepath: data/05_model_params/eps_values.pkl
-
+eps_value:
+    type: pickle.PickleDataset
+    filepath: data/05_model_params/eps_value.pkl
+    backend: pickle
 
 dbscan_model:
-  type: pickle.PickleDataSet
-  filepath: data/06_models/dbscan_model.pkl
+    type: pickle.PickleDataset
+    filepath: data/06_models/dbscan_model.pkl
+    backend: joblib
+
+evaluation_results:
+    type: pandas.CSVDataset
+    filepath: data/07_results/evaluation_results.csv
