@@ -7,13 +7,13 @@ def create_pipeline(**kwargs) -> Pipeline:
         [
             Node(
                 func=group_events_by_clients,
-                inputs="events_dataset",
+                inputs="snowflake_dataset",
                 outputs="users_dataset",
                 name="group_events_by_clients_node",
             ),
             Node(
                 func=add_categories,
-                inputs=["users_dataset", "events_dataset", "params:nb_categories"],
+                inputs=["users_dataset", "snowflake_dataset", "params:nb_categories"],
                 outputs="completed_dataset",
                 name="add_categories_node",
             ),

@@ -102,93 +102,6 @@ def group_events_by_clients(events_dataset: pd.DataFrame) -> pd.DataFrame:
 
     return users_dataset
 
-# def group_events_by_clients(events_dataset: pd.DataFrame) -> pd.DataFrame:
-#     events_dataset['timestamp'] = pd.to_datetime(events_dataset['event_time'])
-#
-#     # 2. Extraction des composantes temporelles
-#     events_dataset['hour'] = events_dataset['timestamp'].dt.hour
-#     events_dataset['day'] = events_dataset['timestamp'].dt.dayofweek  # 0 = lundi, 6 = dimanche
-#
-#     # 3. Catégorisation des moments de la journée
-#     def time_of_day(h):
-#         if 6 <= h < 12:
-#             return 'morning'
-#         elif 12 <= h < 18:
-#             return 'afternoon'
-#         elif 18 <= h < 24:
-#             return 'evening'
-#         else:
-#             return 'night'
-#
-#     events_dataset['time_period'] = events_dataset['hour'].apply(time_of_day)
-#
-#     # 4. Encodage one-hot des types d’événements (sécurisé pour les colonnes manquantes)
-#     events_dataset = pd.get_dummies(events_dataset, columns=['event_type'], prefix='event_type')
-#     for col in ['event_type_view', 'event_type_cart', 'event_type_purchase']:
-#         if col not in events_dataset:
-#             events_dataset[col] = 0
-#
-#     # 5. Agrégats principaux
-#     agg_behaviour = events_dataset.groupby('user_id').agg(
-#         total_views=('event_type_view', 'sum'),
-#         total_cart=('event_type_cart', 'sum'),
-#         total_purchase=('event_type_purchase', 'sum'),
-#         unique_categories=('category_id', 'nunique'),
-#         last_activity=('timestamp', 'max')
-#     ).reset_index()
-#
-#     # 6. Total dépensé uniquement sur les achats
-#     total_spent = (
-#         events_dataset[events_dataset['event_type_purchase'] == 1]
-#         .groupby('user_id')['price']
-#         .sum()
-#         .rename('total_spent')
-#         .reset_index()
-#     )
-#
-#     agg_behaviour = agg_behaviour.merge(total_spent, on='user_id', how='left')
-#     agg_behaviour['total_spent'] = agg_behaviour['total_spent'].fillna(0)
-#
-#     # 7. KPIs dérivés
-#     agg_behaviour['avg_basket'] = agg_behaviour['total_spent'] / agg_behaviour['total_purchase'].replace(0, np.nan)
-#     agg_behaviour['conversion_rate'] = agg_behaviour['total_purchase'] / agg_behaviour['total_views'].replace(0, np.nan)
-#
-#     # 8. Répartition par moments de la journée (%)
-#     time_dist = (
-#         events_dataset.groupby(['user_id', 'time_period'])
-#         .size()
-#         .unstack(fill_value=0)
-#         .pipe(lambda d: d.div(d.sum(axis=1), axis=0))
-#         .reset_index()
-#     )
-#
-#     # 9. Heure moyenne d’activité (cyclique)
-#     events_dataset['hour_rad'] = 2 * np.pi * events_dataset['hour'] / 24
-#     hour_avg = events_dataset.groupby('user_id').agg(
-#         hour_cos=('hour_rad', lambda x: np.mean(np.cos(x))),
-#         hour_sin=('hour_rad', lambda x: np.mean(np.sin(x)))
-#     ).reset_index()
-#     hour_avg['peak_hour'] = np.arctan2(hour_avg['hour_sin'], hour_avg['hour_cos']) * (24 / (2 * np.pi))
-#     hour_avg['peak_hour'] = hour_avg['peak_hour'] % 24
-#
-#     # 10. Récence en jours
-#     now = events_dataset['timestamp'].max()
-#     agg_behaviour['recency_days'] = (now - agg_behaviour['last_activity']).dt.days
-#
-#     # 11. Fusion finale + nettoyage
-#
-#     df_user_features = (
-#         agg_behaviour
-#         .merge(time_dist, on='user_id', how='left')
-#         .merge(hour_avg[['user_id', 'peak_hour']], on='user_id', how='left')
-#         .drop(columns=['last_activity'])
-#         .fillna(0)
-#     )
-#
-#     print(df_user_features.columns)
-#
-#     return df_user_features
-
 
 def add_categories(users_dataset: pd.DataFrame, raw_dataset: pd.DataFrame, nb_categories: int) -> pd.DataFrame:
     """Add each category representing the
@@ -233,6 +146,8 @@ def add_categories(users_dataset: pd.DataFrame, raw_dataset: pd.DataFrame, nb_ca
     purchase_pivot.columns = [
         'user_id' if col == 'user_id' else f"cat_{col}" for col in purchase_pivot.columns
     ]
+
+    purchase_pivot['user_id'] = purchase_pivot['user_id'].astype(int)
 
     # 4. Merge avec ton dataframe final
     df_final = users_dataset.merge(purchase_pivot, on='user_id', how='left').fillna(0)

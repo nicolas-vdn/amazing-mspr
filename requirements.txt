@@ -7,3 +7,5 @@ scikit-learn~=1.5.0
 numpy~=1.26.2
 pathlib~=1.0.1
 kneed~=0.8.5
+snowflake-connector-python
+snowflake-sqlalchemy

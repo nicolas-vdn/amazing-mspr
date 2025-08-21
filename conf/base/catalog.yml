@@ -1,24 +1,16 @@
 # Here you can define all your data sets by using simple YAML syntax.
 
-#snowflake_dataset:
-#    type: pandas.SQLQueryDataSet
-#    credentials: snowflake_creds
-#    sql: |
-#        SELECT *
-#        FROM AMAZING_DATA.CLIENT_DATA.CLIENT_EVENTS
-#        WHERE EVENT_TIME >= '2024-10-01'
-#          AND EVENT_TIME < '2024-11-01'
-#        SAMPLE (0.1) SEED(42);
-#    load_args:
-#        index_col: id
-
-
-events_dataset:
-  type: amazing_mspr.extras.partial_csv_dataset.PartialCSVDataSet
-  filepath: data/01_raw/events_dataset.csv
-  nrows: 2000
-  usecols: ["user_id", "event_type", "event_time", "category_code", "category_id", "price"]
-  random: False
+snowflake_dataset:
+    type: pandas.SQLQueryDataset
+    credentials: snowflake_creds
+    sql: |
+        SELECT *
+        FROM AMAZING_DATA.CLIENT_DATA.CLIENT_EVENTS
+        SAMPLE (0.1) SEED(42)
+        WHERE EVENT_TIME >= '2019-10-01'
+          AND EVENT_TIME < '2019-11-01'
+    load_args:
+        index_col: user_id
 
 users_dataset:
     type: pandas.CSVDataset
@@ -36,9 +28,9 @@ pca_dataset:
    type: pandas.CSVDataset
    filepath: data/05_model_params/pca_dataset.csv
 
-eps_value:
+eps_values:
     type: pickle.PickleDataset
-    filepath: data/05_model_params/eps_value.pkl
+    filepath: data/05_model_params/eps_values.pkl
     backend: pickle
 
 dbscan_model:
