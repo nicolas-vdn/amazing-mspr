@@ -4,7 +4,6 @@ WORKDIR /app
 
 COPY src/Data_transformation.ipynb ./
 COPY requirements.txt ./
-COPY .env ./
 
 EXPOSE 443
 
