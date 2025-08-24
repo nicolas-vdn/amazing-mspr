@@ -9,3 +9,4 @@ streamlit
 snowflake-snowpark-python
 notebook
 nbconvert
+python-dotenv

@@ -17,7 +17,10 @@ jobs:
       - name: Build Docker image
         run: docker build -f Dockerfile.transformation -t amazing-transformation .
 
-      - name: Run contrainer
+      - name: Run container
+        env:
+          SNOWFLAKE_USERNAME: ${{ secrets.SNOWFLAKE_USERNAME }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
         run: docker run --rm amazing-transformation
 
   run-docker-clustering:
@@ -31,5 +34,8 @@ jobs:
       - name: Build Docker image
         run: docker build -f Dockerfile.clustering -t amazing-clustering .
 
-      - name: Run contrainer
+      - name: Run container
+        env:
+          SNOWFLAKE_USERNAME: ${{ secrets.SNOWFLAKE_USERNAME }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
         run: docker run --rm amazing-clustering
