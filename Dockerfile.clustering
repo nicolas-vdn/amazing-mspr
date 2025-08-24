@@ -5,8 +5,6 @@ WORKDIR /app
 COPY src/Clustering.ipynb ./
 COPY requirements.txt ./
 
-EXPOSE 443
-
 RUN pip install --no-cache-dir -r requirements.txt
 
 CMD ["jupyter", "nbconvert", "--to", "notebook", "--execute", "--inplace", "--ExecutePreprocessor.kernel_name=python3", "Clustering.ipynb"]
