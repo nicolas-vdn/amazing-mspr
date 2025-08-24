@@ -16,9 +16,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Vérifier le secret
-        run: echo "Le username est : $SNOWFLAKE_USERNAME"
+        run: |
+          echo "Le username est : $SNOWFLAKE_USERNAME"
 
       - name: Build Docker image
         run: docker build -f Dockerfile.transformation -t amazing-transformation .
