@@ -1,7 +1,6 @@
 name: Docker Job Transformation
 
 on:
-  push:
   schedule:
     - cron: "0 7 * * *"
   workflow_dispatch:
