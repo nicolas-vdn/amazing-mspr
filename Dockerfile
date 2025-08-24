@@ -1,0 +1,12 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+COPY src/Data_transformation.ipynb ./
+COPY requirements.txt ./
+
+EXPOSE 443
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+CMD ["jupyter", "nbconvert", "--to", "notebook", "--execute", "--inplace", "--ExecutePreprocessor.kernel_name=python3", "Data_transformation.ipynb"]
