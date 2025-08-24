@@ -9,9 +9,6 @@ on:
 jobs:
   run-docker-transformation:
     runs-on: ubuntu-latest
-    env:
-      SNOWFLAKE_USERNAME: ${{ secrets.SNOWFLAKE_USERNAME }}
-      SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
 
     steps:
       - name: Checkout code
@@ -25,7 +22,13 @@ jobs:
         run: docker build -f Dockerfile.transformation -t amazing-transformation .
 
       - name: Run container
-        run: docker run --rm amazing-transformation
+        env:
+          SNOWFLAKE_USERNAME: ${{ secrets.SNOWFLAKE_USERNAME }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+        run: docker run --rm \
+          -e SNOWFLAKE_USERNAME=$SNOWFLAKE_USERNAME \
+          -e SNOWFLAKE_PASSWORD=$SNOWFLAKE_PASSWORD \
+          amazing-transformation
 
   run-docker-clustering:
     runs-on: ubuntu-latest
@@ -42,4 +45,7 @@ jobs:
         env:
           SNOWFLAKE_USERNAME: ${{ secrets.SNOWFLAKE_USERNAME }}
           SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-        run: docker run --rm amazing-clustering
+        run: docker run --rm \
+          -e SNOWFLAKE_USERNAME=$SNOWFLAKE_USERNAME \
+          -e SNOWFLAKE_PASSWORD=$SNOWFLAKE_PASSWORD \
+          amazing-clustering
