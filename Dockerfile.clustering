@@ -2,7 +2,7 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-COPY src/Data_transformation.ipynb ./
+COPY src/Data_clustering.ipynb ./
 COPY requirements.txt ./
 
 EXPOSE 443
