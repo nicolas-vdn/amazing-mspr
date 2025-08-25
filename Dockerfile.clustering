@@ -1,0 +1,10 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+COPY src/Clustering.ipynb ./
+COPY requirements.txt ./
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+CMD ["jupyter", "nbconvert", "--to", "notebook", "--execute", "--inplace", "--ExecutePreprocessor.kernel_name=python3", "Clustering.ipynb"]
