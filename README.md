@@ -58,7 +58,7 @@ Chaque notebook dispose d’un **workflow GitHub Actions** associé :
 ## Utilisation Manuelle
 
 1. Aller dans **GitHub Actions**  
-2. Sélectionner le workflow du **Notebook 1** (Transformation) ou **Notebook 2** (Clustering)  
+2. Sélectionner le workflow **Docker Job Transformation** (Transformation + Clustering)  
 3. Cliquer sur **Run workflow**  
 
 ---
