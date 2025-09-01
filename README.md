@@ -1,12 +1,12 @@
-# 🚀 Data Processing Pipeline avec Snowflake & GitHub Actions
+# Data Processing Pipeline avec Snowflake & GitHub Actions
 
-## 📌 Description
+## Description
 Ce projet met en place une pipeline de traitement de données automatisée avec deux notebooks principaux.  
 Chaque notebook est transformé en script Python et exécuté dans un conteneur Docker via des **GitHub Actions** planifiées.
 
 ---
 
-## 📂 Architecture du Projet
+## Architecture du Projet
 
 ### 1. **Notebook 1 – Ingestion & Transformation**
 - Récupère les données **RAW_DATA** depuis **Snowflake**  
@@ -20,7 +20,7 @@ Chaque notebook est transformé en script Python et exécuté dans un conteneur 
 
 ---
 
-## ⚙️ Exécution Automatisée
+## Exécution Automatisée
 
 Chaque notebook dispose d’un **workflow GitHub Actions** associé :
 
@@ -29,14 +29,14 @@ Chaque notebook dispose d’un **workflow GitHub Actions** associé :
   - **Exécution manuelle** possible via l’interface GitHub Actions  
 
 - **Étapes automatisées** :  
-  1. **Build** d’une image **Docker** spécifique au notebook  
-  2. Création d’un **container**  
-  3. Conversion du notebook en **script Python exécutable**  
-  4. Lancement du script dans le container  
+  - **Build** d’une image **Docker** spécifique au notebook  
+  - Création d’un **container**  
+  - Conversion du notebook en **script Python exécutable**  
+  - Lancement du script dans le container  
 
 ---
 
-## 🛠️ Stack Technique
+## Stack Technique
 
 - **Snowflake** : stockage et traitement de données  
 - **Jupyter / Python** : langage principal pour les notebooks et scripts  
@@ -47,7 +47,7 @@ Chaque notebook dispose d’un **workflow GitHub Actions** associé :
 
 ---
 
-## 📦 Organisation des Données
+## Organisation des Données
 
 - **RAW_DATA** : données sources non transformées  
 - **TRANSFORMED_DATA** : données nettoyées et préparées  
@@ -55,7 +55,7 @@ Chaque notebook dispose d’un **workflow GitHub Actions** associé :
 
 ---
 
-## ▶️ Utilisation Manuelle
+## Utilisation Manuelle
 
 1. Aller dans **GitHub Actions**  
 2. Sélectionner le workflow du **Notebook 1** (Transformation) ou **Notebook 2** (Clustering)  
@@ -63,6 +63,6 @@ Chaque notebook dispose d’un **workflow GitHub Actions** associé :
 
 ---
 
-## 🔒 Sécurité & Secrets
+## Sécurité & Secrets
 
 Les credentials Snowflake et autres variables sensibles sont stockés en tant que **GitHub Secrets**, injectés dans l’environnement au runtime.  
