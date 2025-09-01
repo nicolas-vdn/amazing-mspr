@@ -1,7 +1,7 @@
 # 🚀 Data Processing Pipeline avec Snowflake & GitHub Actions
 
 ## 📌 Description
-Ce projet met en place une chaîne de traitement de données automatisée avec deux notebooks principaux.  
+Ce projet met en place une pipeline de traitement de données automatisée avec deux notebooks principaux.  
 Chaque notebook est transformé en script Python et exécuté dans un conteneur Docker via des **GitHub Actions** planifiées.
 
 ---
@@ -25,7 +25,7 @@ Chaque notebook est transformé en script Python et exécuté dans un conteneur 
 Chaque notebook dispose d’un **workflow GitHub Actions** associé :
 
 - **Déclencheurs** :  
-  - Tous les jours à **07h00 (UTC)**  
+  - Tous les jours à **07h00 (UTC)** 
   - **Exécution manuelle** possible via l’interface GitHub Actions  
 
 - **Étapes automatisées** :  
@@ -43,7 +43,7 @@ Chaque notebook dispose d’un **workflow GitHub Actions** associé :
 - **Docker** : conteneurisation des notebooks  
 - **GitHub Actions** : orchestration CI/CD et scheduling
 - **Matplotlib / Seaborn / Plotly** : analyse de données
-- **Pandas / Scikit-learn / Kneed / Numpy / Matplotlib** : transformations & clustering  
+- **Pandas / Scikit-learn / Kneed / Numpy / Matplotlib / Joblib** : transformations & clustering  
 
 ---
 
