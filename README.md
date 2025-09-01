@@ -41,8 +41,9 @@ Chaque notebook dispose d’un **workflow GitHub Actions** associé :
 - **Snowflake** : stockage et traitement de données  
 - **Jupyter / Python** : langage principal pour les notebooks et scripts  
 - **Docker** : conteneurisation des notebooks  
-- **GitHub Actions** : orchestration CI/CD et scheduling  
-- **Pandas / Scikit-learn / Kneet / Numpy / Matplotlib** : analyses, transformations & clustering  
+- **GitHub Actions** : orchestration CI/CD et scheduling
+- **Matplotlib / Seaborn / Plotly** : analyse de données
+- **Pandas / Scikit-learn / Kneed / Numpy / Matplotlib** : transformations & clustering  
 
 ---
 
