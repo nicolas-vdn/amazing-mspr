@@ -8,7 +8,7 @@ Chaque notebook est transformé en script Python et exécuté dans un conteneur 
 
 ## Architecture du Projet
 
-### 1. **Notebook 1 – Ingestion & Transformation**
+### 1. **Notebook 1 – Chargement & Transformation**
 - Récupère les données **RAW_DATA** depuis **Snowflake**  
 - Effectue les transformations nécessaires  
 - Stocke les données transformées dans la table **TRANSFORMED_DATA** sur **Snowflake**
